@@ -30,7 +30,7 @@
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
 #define MOD_CONFIG_NAME         "curl_asr.conf"
-#define MOD_VERSION             "v1.1.0"
+#define MOD_VERSION             "v1.1.1"
 #define QUEUE_SIZE              128
 #define VAD_STORE_FRAMES        64
 #define VAD_RECOVERY_FRAMES     20
@@ -49,6 +49,7 @@ typedef struct {
     uint32_t                request_timeout;    // seconds
     uint32_t                connect_timeout;    // seconds
     uint32_t                upload_method;
+    uint8_t                 fl_sys_debug;
     uint8_t                 fl_vad_debug;
     uint8_t                 fl_shutdown;
     uint8_t                 fl_log_http_errors;

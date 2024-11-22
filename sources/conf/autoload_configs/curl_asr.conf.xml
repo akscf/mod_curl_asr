@@ -1,7 +1,7 @@
 <configuration name="curl_asr.conf" description="">
     <settings>
         <param name="api-url" value="http://127.0.0.1:8080/v1/audio/transcriptions" />
-        <param name="api-key" value="---YOUR-API-KEY---" />
+        <!-- <param name="api-key" value="your-secret" /> -->
 
         <!-- curl settings -->
         <param name="connect-timeout" value="10" />

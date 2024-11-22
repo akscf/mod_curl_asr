@@ -103,8 +103,10 @@ switch_status_t curl_post_upload_perform(switch_buffer_t *recv_buffer, switch_ha
         switch_curl_easy_setopt(curl_handle, CURLOPT_PROXY, globals->proxy);
     }
 
-    curl_easy_setopt(curl_handle, CURLOPT_XOAUTH2_BEARER, globals->api_key);
-    curl_easy_setopt(curl_handle, CURLOPT_HTTPAUTH, CURLAUTH_BEARER);
+    if(globals->api_key) {
+        curl_easy_setopt(curl_handle, CURLOPT_XOAUTH2_BEARER, globals->api_key);
+        curl_easy_setopt(curl_handle, CURLOPT_HTTPAUTH, CURLAUTH_BEARER);
+    }
 
     if((form = curl_mime_init(curl_handle))) {
         if(params && !switch_core_hash_empty(params)) {
@@ -220,8 +222,10 @@ switch_status_t curl_put_upload_perform(switch_buffer_t *recv_buffer, switch_has
         switch_curl_easy_setopt(curl_handle, CURLOPT_PROXY, globals->proxy);
     }
 
-    curl_easy_setopt(curl_handle, CURLOPT_XOAUTH2_BEARER, globals->api_key);
-    curl_easy_setopt(curl_handle, CURLOPT_HTTPAUTH, CURLAUTH_BEARER);
+    if(globals->api_key) {
+        curl_easy_setopt(curl_handle, CURLOPT_XOAUTH2_BEARER, globals->api_key);
+        curl_easy_setopt(curl_handle, CURLOPT_HTTPAUTH, CURLAUTH_BEARER);
+    }
 
     if(params && !switch_core_hash_empty(params)) {
         const void *hkey = NULL; void *hval = NULL;

@@ -82,6 +82,10 @@ char *chunk_write(switch_byte_t *buf, uint32_t buf_len, uint32_t channels, uint3
     switch_uuid_str((char *)name_uuid, sizeof(name_uuid));
     file_name = switch_mprintf("%s%s%s.%s", globals.tmp_path, SWITCH_PATH_SEPARATOR, name_uuid, (file_ext == NULL ? "wav" : file_ext) );
 
+    if(globals.fl_sys_debug) {
+        switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_DEBUG, "chunk file: [%s]\n", file_name);
+    }
+
     if((status = switch_core_file_open(&fh, file_name, channels, samplerate, flags, NULL)) != SWITCH_STATUS_SUCCESS) {
         switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "Unable to open file (%s)\n", file_name);
         goto out;

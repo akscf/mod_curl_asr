@@ -161,7 +161,7 @@ static void *SWITCH_THREAD_FUNC transcribe_thread(switch_thread_t *thread, void 
 
                 schunks = 0;
                 sentence_timeout = 0;
-                unlink(chunk_fname);
+                if(!globals.fl_sys_debug) { unlink(chunk_fname); }
                 switch_safe_free(chunk_fname);
                 switch_buffer_zero(chunk_buffer);
             }
@@ -543,6 +543,8 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_curl_asr_load) {
                 if(val) globals.vad_threshold = atoi (val);
             } else if(!strcasecmp(var, "vad-debug")) {
                 if(val) globals.fl_vad_debug = switch_true(val);
+            } else if(!strcasecmp(var, "sys-debug")) {
+                if(val) globals.fl_sys_debug = switch_true(val);
             } else if(!strcasecmp(var, "api-key")) {
                 if(val) globals.api_key = switch_core_strdup(pool, val);
             } else if(!strcasecmp(var, "api-url")) {
@@ -578,10 +580,6 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_curl_asr_load) {
         switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "Missing required parameter: api-url\n");
         switch_goto_status(SWITCH_STATUS_GENERR, out);
     }
-    if(!globals.api_key) {
-        switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "Missing required parameter: api-key\n");
-        switch_goto_status(SWITCH_STATUS_GENERR, out);
-    }
 
     globals.opt_encoding = globals.opt_encoding ?  globals.opt_encoding : "wav";
     globals.sentence_max_sec = globals.sentence_max_sec > DEF_SENTENCE_MAX_TIME ? globals.sentence_max_sec : DEF_SENTENCE_MAX_TIME;
@@ -608,7 +606,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_curl_asr_load) {
     asr_interface->asr_load_grammar = asr_load_grammar;
     asr_interface->asr_unload_grammar = asr_unload_grammar;
 
-    switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "CurlASR (%s)\n", MOD_VERSION);
+    switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "CurlASR (%s)%s\n", MOD_VERSION, (globals.fl_sys_debug ? " [DEBUG]" : ""));
 
 out:
     if(xml) {

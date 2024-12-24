@@ -30,7 +30,7 @@
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
 #define MOD_CONFIG_NAME         "curl_asr.conf"
-#define MOD_VERSION             "v1.1.1"
+#define MOD_VERSION             "v1.1.2"
 #define QUEUE_SIZE              128
 #define VAD_STORE_FRAMES        64
 #define VAD_RECOVERY_FRAMES     20
@@ -72,7 +72,10 @@ typedef struct {
     switch_buffer_t         *curl_recv_buffer_ref;
     switch_hash_t           *curl_params;
     switch_vad_state_t      vad_state;
+    char                    *api_url;
+    char                    *api_key;
     int32_t                 transcription_results;
+    uint32_t                upload_method;
     uint32_t                vad_buffer_size;
     uint32_t                vad_stored_frames;
     uint32_t                chunk_buffer_size;
@@ -92,8 +95,8 @@ typedef struct {
 } xdata_buffer_t;
 
 /* curl.c */
-switch_status_t curl_post_upload_perform(switch_buffer_t *recv_buffer, switch_hash_t *params, char *filename, globals_t *globals);
-switch_status_t curl_put_upload_perform(switch_buffer_t *recv_buffer, switch_hash_t *params, char *filename, globals_t *globals);
+switch_status_t curl_post_upload_perform(char *api_url, char *api_key, switch_buffer_t *recv_buffer, switch_hash_t *params, char *filename, globals_t *globals);
+switch_status_t curl_put_upload_perform(char *api_url, char *api_key, switch_buffer_t *recv_buffer, switch_hash_t *params, char *filename, globals_t *globals);
 
 /* utils.c */
 char *chunk_write(switch_byte_t *buf, uint32_t buf_len, uint32_t channels, uint32_t samplerate, const char *file_ext);

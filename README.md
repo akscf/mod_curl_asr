@@ -17,4 +17,14 @@
  </condition>
 </extension>
 
+<!-- v1.1.2 -->
+<extension name="openai-asr">
+  <condition field="destination_number" expression="^(3222)$">
+    <action application="answer"/>
+    <action application="play_and_detect_speech" data="conference/8000/conf-welcome.wav detect:curl {url=http://new_url/, key=-alt-key-, method=put|post }"/>
+    <action application="sleep" data="10000"/>
+    <action application="hangup"/>
+ </condition>
+</extension>
+
 ```

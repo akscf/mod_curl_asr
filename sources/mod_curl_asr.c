@@ -112,12 +112,12 @@ static void *SWITCH_THREAD_FUNC transcribe_thread(switch_thread_t *thread, void 
                 switch_buffer_zero(curl_recv_buffer);
                 switch_core_hash_insert(asr_ctx->curl_params, "chunks", switch_core_sprintf(pool, "%d", schunks));
 
-                if(globals.upload_method == UPLD_METHOD_POST) {
-                    status = curl_post_upload_perform(curl_recv_buffer, asr_ctx->curl_params, chunk_fname, &globals);
-                } else if(globals.upload_method == UPLD_METHOD_PUT) {
-                    status = curl_put_upload_perform(curl_recv_buffer, asr_ctx->curl_params, chunk_fname, &globals);
+                if(asr_ctx->upload_method == UPLD_METHOD_POST) {
+                    status = curl_post_upload_perform(asr_ctx->api_url, asr_ctx->api_key, curl_recv_buffer, asr_ctx->curl_params, chunk_fname, &globals);
+                } else if(asr_ctx->upload_method == UPLD_METHOD_PUT) {
+                    status = curl_put_upload_perform(asr_ctx->api_url, asr_ctx->api_key, curl_recv_buffer, asr_ctx->curl_params, chunk_fname, &globals);
                 } else {
-                    switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "Unsupported upload method\n");
+                    switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "Unsupported upload method (%i)\n", asr_ctx->upload_method);
                     status = SWITCH_STATUS_FALSE;
                 }
 
@@ -212,6 +212,10 @@ static switch_status_t asr_open(switch_asr_handle_t *ah, const char *codec, int 
         switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "switch_core_alloc()\n");
         switch_goto_status(SWITCH_STATUS_GENERR, out);
     }
+
+    asr_ctx->api_url = globals.api_url;
+    asr_ctx->api_key = globals.api_key;
+    asr_ctx->upload_method = globals.upload_method;
 
     asr_ctx->chunk_buffer_size = 0;
     asr_ctx->samplerate = samplerate;
@@ -495,8 +499,16 @@ static void asr_text_param(switch_asr_handle_t *ah, char *param, const char *val
 
     assert(asr_ctx != NULL);
 
-    if(asr_ctx->curl_params) {
-        if(val) switch_core_hash_insert(asr_ctx->curl_params, param, switch_core_strdup(ah->memory_pool, val));
+    if(strcasecmp(param, "url") == 0) {
+        if(val) asr_ctx->api_url = switch_core_strdup(ah->memory_pool, val);
+    } else if(strcasecmp(param, "key") == 0) {
+        if(val) asr_ctx->api_key = switch_core_strdup(ah->memory_pool, val);
+    } else if(strcasecmp(param, "method") == 0) {
+        if(val) asr_ctx->upload_method = (strcasecmp(val, "put") == 0 ? UPLD_METHOD_PUT : UPLD_METHOD_POST);
+    } else {
+        if(asr_ctx->curl_params && val) {
+            switch_core_hash_insert(asr_ctx->curl_params, param, switch_core_strdup(ah->memory_pool, val));
+        }
     }
 }
 
@@ -543,7 +555,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_curl_asr_load) {
                 if(val) globals.vad_threshold = atoi (val);
             } else if(!strcasecmp(var, "vad-debug")) {
                 if(val) globals.fl_vad_debug = switch_true(val);
-            } else if(!strcasecmp(var, "sys-debug")) {
+            } else if(!strcasecmp(var, "debug")) {
                 if(val) globals.fl_sys_debug = switch_true(val);
             } else if(!strcasecmp(var, "api-key")) {
                 if(val) globals.api_key = switch_core_strdup(pool, val);
@@ -576,11 +588,6 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_curl_asr_load) {
         }
     }
 
-    if(!globals.api_url) {
-        switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "Missing required parameter: api-url\n");
-        switch_goto_status(SWITCH_STATUS_GENERR, out);
-    }
-
     globals.opt_encoding = globals.opt_encoding ?  globals.opt_encoding : "wav";
     globals.sentence_max_sec = globals.sentence_max_sec > DEF_SENTENCE_MAX_TIME ? globals.sentence_max_sec : DEF_SENTENCE_MAX_TIME;
 
@@ -606,7 +613,7 @@ SWITCH_MODULE_LOAD_FUNCTION(mod_curl_asr_load) {
     asr_interface->asr_load_grammar = asr_load_grammar;
     asr_interface->asr_unload_grammar = asr_unload_grammar;
 
-    switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "CurlASR (%s)%s\n", MOD_VERSION, (globals.fl_sys_debug ? " [DEBUG]" : ""));
+    switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_NOTICE, "CURL-ASR (%s)%s\n", MOD_VERSION, (globals.fl_sys_debug ? " [DEBUG]" : ""));
 
 out:
     if(xml) {

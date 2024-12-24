@@ -61,7 +61,7 @@ static size_t curl_io_read_callback(char *buffer, size_t size, size_t nitems, vo
     return rc;
 }
 
-switch_status_t curl_post_upload_perform(switch_buffer_t *recv_buffer, switch_hash_t *params, char *filename, globals_t *globals) {
+switch_status_t curl_post_upload_perform(char *api_url, char *api_key, switch_buffer_t *recv_buffer, switch_hash_t *params, char *filename, globals_t *globals) {
     switch_status_t status = SWITCH_STATUS_SUCCESS;
     CURL *curl_handle = NULL;
     curl_mime *form = NULL;
@@ -69,6 +69,11 @@ switch_status_t curl_post_upload_perform(switch_buffer_t *recv_buffer, switch_ha
     switch_curl_slist_t *headers = NULL;
     switch_CURLcode curl_ret = 0;
     long http_resp = 0;
+
+    if(!api_url) {
+        switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "api_url not determined\n");
+        return SWITCH_STATUS_FALSE;
+    }
 
     curl_handle = switch_curl_easy_init();
     headers = switch_curl_slist_append(headers, "Content-Type: multipart/form-data");
@@ -88,7 +93,7 @@ switch_status_t curl_post_upload_perform(switch_buffer_t *recv_buffer, switch_ha
     if(globals->user_agent) {
         switch_curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, globals->user_agent);
     }
-    if(strncasecmp(globals->api_url, "https", 5) == 0) {
+    if(strncasecmp(api_url, "https", 5) == 0) {
         switch_curl_easy_setopt(curl_handle, CURLOPT_SSL_VERIFYPEER, 0);
         switch_curl_easy_setopt(curl_handle, CURLOPT_SSL_VERIFYHOST, 0);
     }
@@ -103,8 +108,8 @@ switch_status_t curl_post_upload_perform(switch_buffer_t *recv_buffer, switch_ha
         switch_curl_easy_setopt(curl_handle, CURLOPT_PROXY, globals->proxy);
     }
 
-    if(globals->api_key) {
-        curl_easy_setopt(curl_handle, CURLOPT_XOAUTH2_BEARER, globals->api_key);
+    if(api_key) {
+        curl_easy_setopt(curl_handle, CURLOPT_XOAUTH2_BEARER, api_key);
         curl_easy_setopt(curl_handle, CURLOPT_HTTPAUTH, CURLAUTH_BEARER);
     }
 
@@ -131,7 +136,7 @@ switch_status_t curl_post_upload_perform(switch_buffer_t *recv_buffer, switch_ha
     }
 
     headers = switch_curl_slist_append(headers, "Expect:");
-    switch_curl_easy_setopt(curl_handle, CURLOPT_URL, globals->api_url);
+    switch_curl_easy_setopt(curl_handle, CURLOPT_URL, api_url);
 
     curl_ret = switch_curl_easy_perform(curl_handle);
     if(!curl_ret) {
@@ -142,7 +147,7 @@ switch_status_t curl_post_upload_perform(switch_buffer_t *recv_buffer, switch_ha
     }
 
     if(http_resp != 200) {
-        switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "http-error=[%ld] (%s)\n", http_resp, globals->api_url);
+        switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "http-error=[%ld] (%s)\n", http_resp, api_url);
         status = SWITCH_STATUS_FALSE;
     }
 
@@ -165,7 +170,7 @@ switch_status_t curl_post_upload_perform(switch_buffer_t *recv_buffer, switch_ha
     return status;
 }
 
-switch_status_t curl_put_upload_perform(switch_buffer_t *recv_buffer, switch_hash_t *params, char *filename, globals_t *globals) {
+switch_status_t curl_put_upload_perform(char *api_url, char *api_key, switch_buffer_t *recv_buffer, switch_hash_t *params, char *filename, globals_t *globals) {
     switch_status_t status = SWITCH_STATUS_SUCCESS;
     struct stat file_info = {0};
     FILE *fh = NULL;
@@ -176,6 +181,10 @@ switch_status_t curl_put_upload_perform(switch_buffer_t *recv_buffer, switch_has
     char *xopts_json = NULL;
     char *xopts_hdr = NULL;
 
+    if(!api_url) {
+        switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "api_url not determined\n");
+        return SWITCH_STATUS_FALSE;
+    }
     if(stat(filename, &file_info)) {
         switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "stat()\n");
         return SWITCH_STATUS_FALSE;
@@ -207,7 +216,7 @@ switch_status_t curl_put_upload_perform(switch_buffer_t *recv_buffer, switch_has
     if(globals->user_agent) {
         switch_curl_easy_setopt(curl_handle, CURLOPT_USERAGENT, globals->user_agent);
     }
-    if(strncasecmp(globals->api_url, "https", 5) == 0) {
+    if(strncasecmp(api_url, "https", 5) == 0) {
         switch_curl_easy_setopt(curl_handle, CURLOPT_SSL_VERIFYPEER, 0);
         switch_curl_easy_setopt(curl_handle, CURLOPT_SSL_VERIFYHOST, 0);
     }
@@ -222,8 +231,8 @@ switch_status_t curl_put_upload_perform(switch_buffer_t *recv_buffer, switch_has
         switch_curl_easy_setopt(curl_handle, CURLOPT_PROXY, globals->proxy);
     }
 
-    if(globals->api_key) {
-        curl_easy_setopt(curl_handle, CURLOPT_XOAUTH2_BEARER, globals->api_key);
+    if(api_key) {
+        curl_easy_setopt(curl_handle, CURLOPT_XOAUTH2_BEARER, api_key);
         curl_easy_setopt(curl_handle, CURLOPT_HTTPAUTH, CURLAUTH_BEARER);
     }
 
@@ -248,7 +257,7 @@ switch_status_t curl_put_upload_perform(switch_buffer_t *recv_buffer, switch_has
     }
 
     headers = switch_curl_slist_append(headers, "Expect:");
-    switch_curl_easy_setopt(curl_handle, CURLOPT_URL, globals->api_url);
+    switch_curl_easy_setopt(curl_handle, CURLOPT_URL, api_url);
 
     curl_ret = switch_curl_easy_perform(curl_handle);
     if(!curl_ret) {
@@ -259,7 +268,7 @@ switch_status_t curl_put_upload_perform(switch_buffer_t *recv_buffer, switch_has
     }
 
     if(http_resp != 200) {
-        switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "http-error=[%ld] (%s)\n", http_resp, globals->api_url);
+        switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "http-error=[%ld] (%s)\n", http_resp, api_url);
         status = SWITCH_STATUS_FALSE;
     }
 

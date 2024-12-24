@@ -17,7 +17,10 @@
  </condition>
 </extension>
 
-<!-- v1.1.2 -->
+<!--
+   v1.1.2
+   added special parameters: url,key,method (which replace default ones from the config)
+-->
 <extension name="openai-asr">
   <condition field="destination_number" expression="^(3222)$">
     <action application="answer"/>

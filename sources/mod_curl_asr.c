@@ -17,6 +17,10 @@
  * Module Contributor(s):
  *  Konstantin Alexandrin <akscfx@gmail.com>
  *
+ * Provides the ability to interact with STT services over HTTP
+ *
+ * Development repository:
+ * https://github.com/akscf/mod_curl_asr
  *
  */
 #include "mod_curl_asr.h"

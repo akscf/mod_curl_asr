@@ -1,6 +1,7 @@
 <p>
   ASR module that allows to work with speech transcription tools over http. <br>
-  Supports two mode: POST (upload form, asr parameres stored as fields) and PUT (binary stream, asr parameters stored in header: X-ASR-OPTIONS)
+  Supports two mode: POST (upload form, asr parameres stored as fields) and PUT (binary stream, asr parameters stored in header: X-ASR-OPTIONS) <br>
+  Designed to work in tandem with <a href="https://github.com/akscf/asrd">asrd</a>
 </p>
 
 ### Dialplan example

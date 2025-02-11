@@ -1,10 +1,33 @@
 <p>
   ASR module that allows to work with speech transcription tools over http. <br>
-  Supports two mode: POST (upload form, asr parameres stored as fields) and PUT (binary stream, asr parameters stored in header: X-ASR-OPTIONS) <br>
   Designed to work in tandem with <a href="https://github.com/akscf/asrd">asrd</a>
 </p>
 
-### Dialplan example
+### Brief details about backend
+<p>
+    The backned should sopport two http methods: <br>
+    <ul>
+	<li><strong>POST</strong> <br>
+	    this mode is equivalent a simple upload form, there is an one special filed 'file' that contains media data, other fields are the asr custom parameters. <br>
+	    cURL example: curl -v http://127.0.0.1/transcribe/ -H "Content-Type: multipart/form-data" -F op1="val1" -F file="@test.wav"
+	</li>
+	<li><strong>PUT</strong> <br>
+	    the media data caries as a binary-stream, the asr parameters can be packed in a header: X-ASR-OPTIONS (as JSON object) <br>
+	    Header 'Content-Type' should contains the media type. <br>
+	    cURL example: curl -v http://127.0.0.1/transcribe/ -H "Content-Type: audio/wav" -H "X-ASR-OPTIONS: {op1:val1}" --upload-file test.wav
+	</li>
+    </ul>
+</p>
+
+### Build and installation
+ if you already have installed freeswitch and its sources: 
+ - Unpack the module sources into 'src/mod/asr_tts/mod_curl_asr'
+ - go to freeswitch root and edit 'configure.ac', look for variable 'AC_CONFIG_FILES' and add this module (src/mod/asr_tts/mod_curl_asr/Makefile) after 'mod_abstraction' 
+ - perform: make clean (you should see how libtool rebuilding Makefiles, if it doesn't, you did something wrong) 
+ - after that goto 'src/mod/asr_tts/mod_curl_asr' and perform: make clean all install 
+
+
+### Dialplan examples
 ```
 <extension name="asr-test">
   <condition field="destination_number" expression="^(3222)$">

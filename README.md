@@ -25,7 +25,7 @@
  - go to freeswitch root and edit 'configure.ac', look for variable 'AC_CONFIG_FILES' and add this module (src/mod/asr_tts/mod_curl_asr/Makefile) after 'mod_abstraction' 
  - perform: make clean (you should see how libtool rebuilding Makefiles, if it doesn't, you did something wrong) 
  - after that goto 'src/mod/asr_tts/mod_curl_asr' and perform: make clean all install 
-
+   and copy configuration 'conf/autoload_configs/curl_asr.conf.xml' to freeswitch configs dir manually.
 
 ### Dialplan examples
 ```

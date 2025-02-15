@@ -1,11 +1,12 @@
 <p>
-  ASR module that allows to work with speech transcription tools over http. <br>
+  This module allows to work with speech-to-text tools over http. <br>
+  Available through: asr_interface, cammnad api and events. <br>
   Designed to work in tandem with <a href="https://github.com/akscf/asrd">asrd</a>
 </p>
 
-### Brief details about backend
+### Few words about backend
 <p>
-    The backned should sopport two http methods: <br>
+    The backend should sopport two http methods: <br>
     <ul>
 	<li><strong>POST</strong> <br>
 	    this mode is equivalent a simple upload form, there is an one special filed 'file' that contains media data, other fields are the asr custom parameters. <br>
@@ -27,8 +28,8 @@
  - after that goto 'src/mod/asr_tts/mod_curl_asr' and perform: make clean all install 
    and copy configuration 'conf/autoload_configs/curl_asr.conf.xml' to freeswitch configs dir manually.
 
-### Dialplan examples
-```
+### Dialplan xamples
+```XML
 <extension name="asr-test">
   <condition field="destination_number" expression="^(3222)$">
     <action application="answer"/>
@@ -41,10 +42,6 @@
  </condition>
 </extension>
 
-<!--
-   v1.1.2
-   added special parameters: url,key,method (which replace default ones from the config)
--->
 <extension name="openai-asr">
   <condition field="destination_number" expression="^(3222)$">
     <action application="answer"/>
@@ -53,5 +50,15 @@
     <action application="hangup"/>
  </condition>
 </extension>
+
+```
+### Command line
+```
+freeswitch> curl_asr_transcribe /tmp/test.wav
++OK: How old is the Brooklyn Bridge
+```
+
+### Events
+```
 
 ```

@@ -30,13 +30,15 @@
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
 #define MOD_CONFIG_NAME         "curl_asr.conf"
-#define MOD_VERSION             "v1.1.2"
+#define MOD_VERSION             "v1.1.4"
 #define QUEUE_SIZE              128
 #define VAD_STORE_FRAMES        64
 #define VAD_RECOVERY_FRAMES     20
 #define DEF_SENTENCE_MAX_TIME   15
 #define UPLD_METHOD_POST        0
 #define UPLD_METHOD_PUT         1
+#define MY_EVENT_TREQUEST       "curl_asr::transcribe"
+#define MY_EVENT_TRESPONSE      "curl_asr::result"
 
 typedef struct {
     switch_mutex_t          *mutex;
@@ -104,5 +106,6 @@ switch_status_t xdata_buffer_push(switch_queue_t *queue, switch_byte_t *data, ui
 switch_status_t xdata_buffer_alloc(xdata_buffer_t **out, switch_byte_t *data, uint32_t data_len);
 void xdata_buffer_free(xdata_buffer_t **buf);
 void xdata_buffer_queue_clean(switch_queue_t *queue);
+char *parse_response(char *data, switch_stream_handle_t *stream);
 
 #endif

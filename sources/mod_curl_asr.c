@@ -144,7 +144,7 @@ static void *SWITCH_THREAD_FUNC transcribe_thread(switch_thread_t *thread, void 
                         switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "Service response is empty!\n");
                     }
                 } else {
-                    switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "Unable to perform request (status=%d)\n", (int)status);
+                    switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_ERROR, "Unable to perform request!\n");
                 }
 
                 schunks = 0;
@@ -424,9 +424,8 @@ static switch_status_t asr_check_results(switch_asr_handle_t *ah, switch_asr_fla
 }
 
 static switch_status_t asr_get_results(switch_asr_handle_t *ah, char **xmlstr, switch_asr_flag_t *flags) {
-    switch_status_t status = SWITCH_STATUS_FALSE;
     asr_ctx_t *asr_ctx = (asr_ctx_t *)ah->private_info;
-
+    switch_status_t status = SWITCH_STATUS_FALSE;
     void *pop = NULL;
 
     assert(asr_ctx != NULL);

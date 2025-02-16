@@ -60,5 +60,6 @@ freeswitch> curl_asr_transcribe /tmp/test.wav
 
 ### Events
 ```
-
+transcribe request: 'curl_asr::transcribe'
+transcribe result : 'curl_asr::result'
 ```

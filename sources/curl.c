@@ -28,14 +28,18 @@ static const char *ctype_by_file_ext(char *filename) {
 
     if(strstr(filename, ".txt")) {
         return "Content-Type: text/plain";
-    } else if(strstr(filename, ".raw")) {
-        return "Content-Type: application/octet-stream";
-    } else if(strstr(filename, ".bin")) {
-        return "Content-Type: application/octet-stream";
+    } else if(strstr(filename, ".b64")) {
+        return "Content-Type: text/base64";
     } else if(strstr(filename, ".mp3")) {
         return "Content-Type: audio/mp3";
     } else if(strstr(filename, ".wav")) {
         return "Content-Type: audio/wav";
+    } else if(strstr(filename, ".ulaw")) {
+        return "Content-Type: audio/ulaw";
+    } else if(strstr(filename, ".alaw")) {
+        return "Content-Type: audio/alaw";
+    } else if(strstr(filename, ".l16")) {
+        return "Content-Type: audio/l16";
     }
 
     return "Content-Type: application/octet-stream";

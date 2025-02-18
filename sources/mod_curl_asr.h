@@ -40,6 +40,8 @@
 #define MY_EVENT_TREQUEST       "curl_asr::transcribe"
 #define MY_EVENT_TRESPONSE      "curl_asr::result"
 
+//#define MOD_CURL_ASR_DEBUG
+
 typedef struct {
     switch_mutex_t          *mutex;
     uint32_t                active_threads;

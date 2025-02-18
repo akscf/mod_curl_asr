@@ -142,6 +142,10 @@ switch_status_t curl_post_upload_perform(char *api_url, char *api_key, switch_bu
     headers = switch_curl_slist_append(headers, "Expect:");
     switch_curl_easy_setopt(curl_handle, CURLOPT_URL, api_url);
 
+#ifdef MOD_CURL_ASR_DEBUG
+    switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_DEBUG, "Performing POST request [%s]\n", filename);
+#endif // MOD_CURL_ASR_DEBUG
+
     curl_ret = switch_curl_easy_perform(curl_handle);
     if(!curl_ret) {
         switch_curl_easy_getinfo(curl_handle, CURLINFO_RESPONSE_CODE, &http_resp);
@@ -262,6 +266,10 @@ switch_status_t curl_put_upload_perform(char *api_url, char *api_key, switch_buf
 
     headers = switch_curl_slist_append(headers, "Expect:");
     switch_curl_easy_setopt(curl_handle, CURLOPT_URL, api_url);
+
+#ifdef MOD_CURL_ASR_DEBUG
+    switch_log_printf(SWITCH_CHANNEL_LOG, SWITCH_LOG_DEBUG, "Performing PUT request [%s]\n", filename);
+#endif // MOD_CURL_ASR_DEBUG
 
     curl_ret = switch_curl_easy_perform(curl_handle);
     if(!curl_ret) {

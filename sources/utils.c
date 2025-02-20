@@ -71,6 +71,18 @@ switch_status_t xdata_buffer_push(switch_queue_t *queue, switch_byte_t *data, ui
     return SWITCH_STATUS_FALSE;
 }
 
+void text_queue_clean(switch_queue_t *queue) {
+    void *data = NULL;
+
+    if(!queue || !switch_queue_size(queue)) {
+        return;
+    }
+
+    while(switch_queue_trypop(queue, (void *)&data) == SWITCH_STATUS_SUCCESS) {
+        switch_safe_free(data);
+    }
+}
+
 char *chunk_write(switch_byte_t *buf, uint32_t buf_len, uint32_t channels, uint32_t samplerate, const char *file_ext) {
     switch_status_t status = SWITCH_STATUS_FALSE;
     switch_size_t len = (buf_len / sizeof(int16_t));

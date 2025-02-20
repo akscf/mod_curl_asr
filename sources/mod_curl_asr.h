@@ -30,7 +30,7 @@
 #define MAX(a,b) (((a)>(b))?(a):(b))
 
 #define MOD_CONFIG_NAME         "curl_asr.conf"
-#define MOD_VERSION             "v1.1.4"
+#define MOD_VERSION             "v1.1.5"
 #define QUEUE_SIZE              128
 #define VAD_STORE_FRAMES        64
 #define VAD_RECOVERY_FRAMES     20
@@ -87,6 +87,8 @@ typedef struct {
     uint32_t                samplerate;
     uint32_t                channels;
     uint32_t                frame_len;
+    uint32_t                input_timeout;
+    uint32_t                input_expiry;
     uint8_t                 fl_pause;
     uint8_t                 fl_vad_first_cycle;
     uint8_t                 fl_destroyed;
@@ -108,6 +110,7 @@ switch_status_t xdata_buffer_push(switch_queue_t *queue, switch_byte_t *data, ui
 switch_status_t xdata_buffer_alloc(xdata_buffer_t **out, switch_byte_t *data, uint32_t data_len);
 void xdata_buffer_free(xdata_buffer_t **buf);
 void xdata_buffer_queue_clean(switch_queue_t *queue);
+void text_queue_clean(switch_queue_t *queue);
 char *parse_response(char *data, switch_stream_handle_t *stream);
 
 #endif

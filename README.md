@@ -50,8 +50,17 @@
     <action application="hangup"/>
  </condition>
 </extension>
-
 ```
+
+### mod_quickjs
+```javascript
+session.ttsEngine= 'piper';
+session.asrEngine= 'curl';
+
+var txt = session.sayAndDetectSpeech('Hello, how can I halp you?', 10);
+consoleLog('info', "TEXT: " + txt);
+```
+
 ### Command line
 ```
 freeswitch> curl_asr_transcribe /tmp/test.wav

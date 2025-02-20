@@ -1,6 +1,6 @@
 <p>
   This module allows to work with speech-to-text tools over http. <br>
-  Available through: asr_interface, cammnad api and events. <br>
+  Available through: asr_interface, commnad api and events. <br>
   Designed to work in tandem with <a href="https://github.com/akscf/asrd">asrd</a>
 </p>
 

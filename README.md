@@ -1,5 +1,6 @@
 <p>
   This module allows to work with speech-to-text tools over http. <br>
+  Features: vad, audio keeping, flexible adjustment <br>
   Available through: asr_interface, commnad api and events. <br>
   Designed to work in tandem with <a href="https://github.com/akscf/asrd">asrd</a>
 </p>
@@ -54,7 +55,7 @@
 
 ### mod_quickjs
 ```javascript
-session.ttsEngine= 'piper';
+session.ttsEngine= 'piper'; // requires: mod_piper_tts
 session.asrEngine= 'curl';
 
 var txt = session.sayAndDetectSpeech('Hello, how can I help you?', 10);
@@ -63,12 +64,12 @@ consoleLog('info', "TEXT: " + txt);
 
 ### Command line
 ```
-freeswitch> curl_asr_transcribe /tmp/test.wav
+freeswitch> curl_asr_transcript /tmp/test.wav
 +OK: How old is the Brooklyn Bridge
 ```
 
 ### Events
 ```
-transcribe request: 'curl_asr::transcribe'
-transcribe result : 'curl_asr::result'
+curl_asr::transcript
+curl_asr::result
 ```

@@ -34,10 +34,11 @@
 #define QUEUE_SIZE              128
 #define VAD_STORE_FRAMES        64
 #define VAD_RECOVERY_FRAMES     20
-#define DEF_SENTENCE_MAX_TIME   15
+#define DEF_SENTENCE_MAX_TIME   25
+#define DEF_SENTENCE_SILENCE    3
 #define UPLD_METHOD_POST        0
 #define UPLD_METHOD_PUT         1
-#define MY_EVENT_TREQUEST       "curl_asr::transcribe"
+#define MY_EVENT_TREQUEST       "curl_asr::transcript"
 #define MY_EVENT_TRESPONSE      "curl_asr::result"
 
 //#define MOD_CURL_ASR_DEBUG
@@ -46,7 +47,7 @@ typedef struct {
     switch_mutex_t          *mutex;
     uint32_t                active_threads;
     uint32_t                sentence_max_sec;
-    uint32_t                sentence_threshold_sec;
+    uint32_t                sentence_silence_sec;
     uint32_t                vad_silence_ms;
     uint32_t                vad_voice_ms;
     uint32_t                vad_threshold;
@@ -89,6 +90,7 @@ typedef struct {
     uint32_t                frame_len;
     uint32_t                input_timeout;
     uint32_t                input_expiry;
+    uint32_t                silence_sec;
     uint8_t                 fl_start_timers;
     uint8_t                 fl_pause;
     uint8_t                 fl_vad_first_cycle;

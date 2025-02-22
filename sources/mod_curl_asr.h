@@ -54,7 +54,6 @@ typedef struct {
     uint32_t                request_timeout;    // seconds
     uint32_t                connect_timeout;    // seconds
     uint32_t                upload_method;
-    uint8_t                 fl_sys_debug;
     uint8_t                 fl_vad_debug;
     uint8_t                 fl_shutdown;
     uint8_t                 fl_log_http_errors;
@@ -79,6 +78,7 @@ typedef struct {
     switch_vad_state_t      vad_state;
     char                    *api_url;
     char                    *api_key;
+    char                    *alt_tmp_name;
     int32_t                 transcription_results;
     uint32_t                upload_method;
     uint32_t                vad_buffer_size;
@@ -88,14 +88,15 @@ typedef struct {
     uint32_t                samplerate;
     uint32_t                channels;
     uint32_t                frame_len;
-    uint32_t                input_timeout;
-    uint32_t                input_expiry;
+    uint32_t                speech_start_timeout;
+    uint32_t                speech_start_expiry;
     uint32_t                silence_sec;
     uint8_t                 fl_start_timers;
     uint8_t                 fl_pause;
     uint8_t                 fl_vad_first_cycle;
     uint8_t                 fl_destroyed;
     uint8_t                 fl_abort;
+    uint8_t                 fl_keep_tmp;
 } asr_ctx_t;
 
 typedef struct {
@@ -108,7 +109,8 @@ switch_status_t curl_post_upload_perform(char *api_url, char *api_key, switch_bu
 switch_status_t curl_put_upload_perform(char *api_url, char *api_key, switch_buffer_t *recv_buffer, switch_hash_t *params, char *filename, globals_t *globals);
 
 /* utils.c */
-char *chunk_write(switch_byte_t *buf, uint32_t buf_len, uint32_t channels, uint32_t samplerate, const char *file_ext);
+char *chunk_write(switch_byte_t *buf, uint32_t buf_len, uint32_t channels, uint32_t samplerate, const char *file_ext, const char *alt_tmp_name);
+
 switch_status_t xdata_buffer_push(switch_queue_t *queue, switch_byte_t *data, uint32_t data_len);
 switch_status_t xdata_buffer_alloc(xdata_buffer_t **out, switch_byte_t *data, uint32_t data_len);
 void xdata_buffer_free(xdata_buffer_t **buf);
